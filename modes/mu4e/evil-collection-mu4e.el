@@ -68,11 +68,12 @@
 (require 'evil-collection)
 (require 'mu4e nil t)
 
-(declare-function mu4e--main-action-str "mu4e-main")
+(declare-function mu4e--main-action "mu4e-main")
 (declare-function mu4e--main-view-queue "mu4e-main")
 (declare-function mu4e--longest-of-maildirs-and-bookmarks "mu4e-main")
 (declare-function mu4e--longest-of-maildirs-and-bookmarks "mu4e-main")
 (declare-function mu4e--maildirs-with-query "mu4e-folders")
+(declare-function mu4e-search-maildir "mu4e-search")
 (defvar mu4e--server-props)
 (defvar mu4e-main-hide-fully-read)
 
@@ -81,7 +82,9 @@
 with older release versions of `mu4e.'"
   (apply (if (fboundp 'mu4e~main-action-str)
              #'mu4e~main-action-str
-           #'mu4e--main-action-str)
+	   (if (fboundp 'mu4e--main-action-str)
+               #'mu4e--main-action-str
+	     #'mu4e--main-action))
          args))
 
 (defun evil-collection-mu4e--main-view-queue (&rest args)
@@ -295,9 +298,9 @@ with older release versions of `mu4e.'"
   "The place where to end overriding Basic section.")
 
 (defvar evil-collection-mu4e-new-region-basic
-  (concat (evil-collection-mu4e--main-action-str "\t* [J]ump to some maildir\n" 'mu4e-jump-to-maildir)
-          (evil-collection-mu4e--main-action-str "\t* enter a [s]earch query\n" 'mu4e-search)
-          (evil-collection-mu4e--main-action-str "\t* [C]ompose a new message\n" 'mu4e-compose-new))
+  ;(concat (evil-collection-mu4e--main-action-str "\t* [J]ump to some maildir\n" 'mu4e-jump-to-maildir)
+  ;        (evil-collection-mu4e--main-action-str "\t* enter a [s]earch query\n" 'mu4e-search)
+  ;        (evil-collection-mu4e--main-action-str "\t* [C]ompose a new message\n" 'mu4e-compose-new))
   "Define the evil-mu4e Basic region.")
 
 (defvar evil-collection-mu4e-begin-region-misc "\n  Misc"
@@ -408,7 +411,7 @@ If mu4e-main-mode is in evil-state-motion-modes, initialization
 is already done earlier."
     (evil-collection-mu4e-set-state)
     (evil-collection-mu4e-set-bindings)
-    (add-hook 'mu4e-main-mode-hook 'evil-collection-mu4e-update-main-view)
+    ;(add-hook 'mu4e-main-mode-hook 'evil-collection-mu4e-update-main-view)
     (add-hook 'org-mode-hook #'evil-collection-mu4e-org-set-header-to-normal-mode)
     (add-hook 'mu4e-compose-pre-hook #'evil-collection-mu4e-org-set-header-to-insert-mode))
 
